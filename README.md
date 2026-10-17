@@ -56,7 +56,7 @@ composer dump-autoload
 
 Your web server's document root must be Maho's `public/` directory. Asset URLs remain `/js/basicrum/...`; do not add `/public` to storefront URLs.
 
-When replacing a previous Magento/OpenMage installation of this module, remove its old `app/code/community/BasicRum/Analytics` directory before deploying this port. Keep the module declaration only once, using the `local` code pool. Existing `basicrum_analytics/*` configuration and setup-resource records are retained.
+When replacing an earlier installation of this module, remove its old `app/code/community/BasicRum/Analytics` directory before deploying this port. Keep the module declaration only once, using the `local` code pool. Existing `basicrum_analytics/*` configuration and setup-resource records are retained.
 
 ## Configuration
 
@@ -104,7 +104,7 @@ if (typeof window.OPT_OUT_BASICRUM_LOADER_WRAPPER === 'function') {
 
 Basicrum does not show a consent dialog, determine the site's legal basis, persist a consent choice, or trust a decision from an earlier page. The external consent tool remains the source of truth and must signal the current decision on each page.
 
-For backward compatibility, integrations migrated from Magento 1 may continue calling:
+For backward compatibility, existing integrations may continue calling:
 
 - `window.OPT_IN_BASIC_RUM()`
 - `window.OPT_OUT_BASIC_RUM()`
@@ -212,7 +212,7 @@ GitHub Actions runs PHP syntax and configuration tests on PHP 8.3, 8.4, and 8.5,
 
 The integration matrix installs the release ZIP into **Maho 26.9.1** (commit `bbc0a6158a902fe03324377a7f142c45c38f2f59`) on PHP 8.3, 8.4, and 8.5 with MariaDB 10.11. Each job uses Maho's Composer bootstrap, `./maho install`, `./maho migrate`, and a PHP development server with the `public/` document root (the same document root used by `./maho serve`).
 
-Native tests cover setup policies, admin field rendering and saves, all three configuration scopes, inheritance, HTTPS enforcement, invalid settings, query-string privacy, and the wait cap. Playwright then opens the actual Maho storefront and admin. It verifies disabled mode, immediate beacons on home and cart pages, consent before downloads, repeated opt-in, withdrawal and reload, delivered JavaScript assets, Maho beacon tags, and the admin consent helper. The collector is intercepted locally; Maho serves the pages and JavaScript. Magento CE and OpenMage are no longer test platforms for this repository.
+Native tests cover setup policies, admin field rendering and saves, all three configuration scopes, inheritance, HTTPS enforcement, invalid settings, query-string privacy, and the wait cap. Playwright then opens the actual Maho storefront and admin. It verifies disabled mode, immediate beacons on home and cart pages, consent before downloads, repeated opt-in, withdrawal and reload, delivered JavaScript assets, Maho beacon tags, and the admin consent helper. The collector is intercepted locally; Maho serves the pages and JavaScript.
 
 For a local run, install the Node dependencies and Chromium, provide a disposable Maho 26.9.1 checkout and an empty MariaDB database, then run:
 

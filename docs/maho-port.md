@@ -27,7 +27,7 @@ MariaDB 10.11. New Maho releases should be tested before changing this pin.
 The frontend layout hook remains `before_body_end`; monitoring stays out of
 the admin area. Consent callbacks, scoped settings, validation, Boomerang
 bytes, and established page labels remain compatible. The platform beacon
-identifier changes from `mage1` to `maho`.
+identifier is `maho`.
 
 ## Test coverage
 

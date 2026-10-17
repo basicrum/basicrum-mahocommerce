@@ -13,4 +13,4 @@ This module integrates Boomerang Real User Monitoring into Maho Commerce 26.9+ o
 - Inject only into the frontend `before_body_end` layout reference. Emit `p_gen=maho`, and preserve page labels and consent callback compatibility.
 - Keep the canonical WordPress loader parity checks; regenerate both minified loaders after source changes. Do not modify the vendored Boomerang bundle.
 - Test with `php tests/php/run.php`, `npm test`, `bash tests/check-package.sh`, and `bash tests/platform/run.sh maho /path/to/disposable-maho`. The integration runner installs the built ZIP when `BASICRUM_TEST_RELEASE_ZIP` is set and runs Playwright against the real Maho storefront/admin.
-- CI targets Maho 26.9.1 on PHP 8.3/8.4/8.5 and MariaDB 10.11. Do not reintroduce Magento CE or OpenMage test fixtures.
+- CI targets Maho 26.9.1 on PHP 8.3/8.4/8.5 and MariaDB 10.11. Keep integration fixtures focused on Maho Commerce.

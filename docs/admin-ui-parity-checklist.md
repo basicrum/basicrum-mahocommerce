@@ -1,4 +1,4 @@
-> Port note: this checklist records inherited UI behavior. The screenshot is from the earlier Magento 1 module. Current compatibility is checked against Maho 26.9.1 by the native and browser integration suites.
+> Port note: this checklist records inherited UI behavior. The screenshot is from an earlier version of the module. Current compatibility is checked against Maho 26.9.1 by the native and browser integration suites.
 
 # Admin UI parity checklist
 

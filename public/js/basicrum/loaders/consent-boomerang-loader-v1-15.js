@@ -259,7 +259,7 @@
     removeCookie("BOOMR_CONSENT");
   };
 
-  // Backward-compatible aliases used by earlier Magento 1 integrations.
+  // Backward-compatible aliases used by existing integrations.
   mainWin.OPT_IN_BASIC_RUM = mainWin.OPT_IN_BASICRUM_LOADER_WRAPPER;
   mainWin.OPT_OUT_BASIC_RUM = mainWin.OPT_OUT_BASICRUM_LOADER_WRAPPER;
 })(window);
