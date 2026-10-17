@@ -17,9 +17,7 @@ database_password="${BASICRUM_TEST_DB_PASSWORD:-basicrum}"
 bash "$plugin_root/tests/platform/deploy-module.sh" "$platform" "$platform_root"
 
 case "$platform" in
-    magento-ce)
-        ;;
-    openmage)
+    maho)
         composer install \
             --working-dir="$platform_root" \
             --no-dev \
@@ -45,8 +43,8 @@ common_install_args=(
     --db_prefix br_
     --url http://127.0.0.1:8080/
     --secure_base_url http://127.0.0.1:8080/
-    --use_secure no
-    --use_secure_admin no
+    --use_secure 0
+    --use_secure_admin 0
     --admin_lastname Admin
     --admin_firstname Basicrum
     --admin_email admin@example.com
@@ -56,10 +54,9 @@ common_install_args=(
 
 (
     cd "$platform_root"
-    php -d memory_limit=-1 install.php -- \
-        "${common_install_args[@]}" \
-        --use_rewrites no \
-        --skip_url_validation yes
+    php -d memory_limit=-1 maho install --no-interaction "${common_install_args[@]}"
+    php maho migrate --no-interaction
+    php maho cache:flush
 )
 
 php "$plugin_root/tests/platform/verify.php" "$platform_root" "$platform"

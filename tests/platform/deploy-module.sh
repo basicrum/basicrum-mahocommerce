@@ -11,7 +11,7 @@ platform_root="$2"
 plugin_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 case "$platform" in
-    magento-ce|openmage)
+    maho)
         ;;
     *)
         echo "Unsupported platform: $platform" >&2
@@ -19,8 +19,8 @@ case "$platform" in
         ;;
 esac
 
-if [[ ! -f "$platform_root/app/Mage.php" ]]; then
-    echo "Platform root does not contain app/Mage.php: $platform_root" >&2
+if [[ ! -f "$platform_root/maho" || ! -d "$platform_root/public" ]]; then
+    echo "Platform root must contain the maho CLI and public directory: $platform_root" >&2
     exit 1
 fi
 
@@ -30,7 +30,7 @@ if [[ -n "${BASICRUM_TEST_RELEASE_ZIP:-}" ]]; then
     trap 'rm -rf -- "$package_tmp_dir"' EXIT
     unzip -q "$BASICRUM_TEST_RELEASE_ZIP" -d "$package_tmp_dir"
     # No source-checkout fallback: every runtime file below comes from the ZIP.
-    plugin_root="$package_tmp_dir/basicrum-magento-1"
+    plugin_root="$package_tmp_dir/basicrum-mahocommerce"
 fi
 
 while read -r source_path destination_path extra; do

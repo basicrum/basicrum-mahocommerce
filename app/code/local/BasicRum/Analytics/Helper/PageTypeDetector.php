@@ -89,7 +89,7 @@ class BasicRum_Analytics_Helper_PageTypeDetector extends Mage_Core_Helper_Abstra
      * @param string[] $handles
      * @return string|null
      */
-    private function getFallbackHandle(array $handles)
+    private function getFallbackHandle(array $handles): ?string
     {
         $ignoredHandles = [
             'default' => true,

@@ -8,10 +8,10 @@ while IFS= read -r xml_file; do
     xmllint --noout "$xml_file"
 done < <(find app -type f -name '*.xml' -print | sort)
 
-module_version="$(xmllint --xpath 'string(/config/modules/BasicRum_Analytics/version)' app/code/community/BasicRum/Analytics/etc/config.xml)"
-privacy_default="$(xmllint --xpath 'string(/config/default/basicrum_analytics/privacy/opt_in_required)' app/code/community/BasicRum/Analytics/etc/config.xml)"
-strip_query_default="$(xmllint --xpath 'string(/config/default/basicrum_analytics/privacy/strip_query_string)' app/code/community/BasicRum/Analytics/etc/config.xml)"
-http_policy_default="$(xmllint --xpath 'string(/config/default/basicrum_analytics/developer/development_mode)' app/code/community/BasicRum/Analytics/etc/config.xml)"
+module_version="$(xmllint --xpath 'string(/config/modules/BasicRum_Analytics/version)' app/code/local/BasicRum/Analytics/etc/config.xml)"
+privacy_default="$(xmllint --xpath 'string(/config/default/basicrum_analytics/privacy/opt_in_required)' app/code/local/BasicRum/Analytics/etc/config.xml)"
+strip_query_default="$(xmllint --xpath 'string(/config/default/basicrum_analytics/privacy/strip_query_string)' app/code/local/BasicRum/Analytics/etc/config.xml)"
+http_policy_default="$(xmllint --xpath 'string(/config/default/basicrum_analytics/developer/development_mode)' app/code/local/BasicRum/Analytics/etc/config.xml)"
 
 if [[ "$privacy_default" != "1" \
     || "$strip_query_default" != "0" || "$http_policy_default" != "0" ]]; then
@@ -21,9 +21,9 @@ fi
 
 expected_boomerang_sha="90e8a1c85949b10d43e441efc3f0545f95e4384e26ee3042344a8b2b4110589c"
 if command -v shasum >/dev/null 2>&1; then
-    actual_boomerang_sha="$(shasum -a 256 js/basicrum/boomerangs/boomerang-1.815.60.cutting-edge.min.js | awk '{print $1}')"
+    actual_boomerang_sha="$(shasum -a 256 public/js/basicrum/boomerangs/boomerang-1.815.60.cutting-edge.min.js | awk '{print $1}')"
 else
-    actual_boomerang_sha="$(sha256sum js/basicrum/boomerangs/boomerang-1.815.60.cutting-edge.min.js | awk '{print $1}')"
+    actual_boomerang_sha="$(sha256sum public/js/basicrum/boomerangs/boomerang-1.815.60.cutting-edge.min.js | awk '{print $1}')"
 fi
 
 if [[ "$actual_boomerang_sha" != "$expected_boomerang_sha" ]]; then
@@ -31,7 +31,7 @@ if [[ "$actual_boomerang_sha" != "$expected_boomerang_sha" ]]; then
     exit 1
 fi
 
-if grep -R --line-number '<ms>' app/code/community/BasicRum/Analytics/etc; then
+if grep -R --line-number '<ms>' app/code/local/BasicRum/Analytics/etc; then
     echo "Legacy wait-after-onload default key found" >&2
     exit 1
 fi
@@ -39,11 +39,11 @@ fi
 terminology_paths=(
     README.md
     docs
-    app/code/community/BasicRum/Analytics/Block/Adminhtml
-    app/code/community/BasicRum/Analytics/Model/System/Config/Backend
-    app/code/community/BasicRum/Analytics/Model/System/Config/Source
-    app/code/community/BasicRum/Analytics/etc/system.xml
-    app/code/community/BasicRum/Analytics/etc/adminhtml.xml
+    app/code/local/BasicRum/Analytics/Block/Adminhtml
+    app/code/local/BasicRum/Analytics/Model/System/Config/Backend
+    app/code/local/BasicRum/Analytics/Model/System/Config/Source
+    app/code/local/BasicRum/Analytics/etc/system.xml
+    app/code/local/BasicRum/Analytics/etc/adminhtml.xml
     app/locale/en_US/BasicRum_Analytics.csv
 )
 if grep -R --line-number -E 'BasicRUM|Beacon URL|Beacon Endpoint URL' "${terminology_paths[@]}"; then
@@ -51,7 +51,7 @@ if grep -R --line-number -E 'BasicRUM|Beacon URL|Beacon Endpoint URL' "${termino
     exit 1
 fi
 
-package_tmp_dir="$(mktemp -d -t basicrum-magento-1.XXXXXX)"
+package_tmp_dir="$(mktemp -d -t basicrum-mahocommerce.XXXXXX)"
 trap 'rm -rf -- "$package_tmp_dir"' EXIT
 bash tools/build-release.sh "$package_tmp_dir"
 

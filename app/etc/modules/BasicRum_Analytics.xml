@@ -3,7 +3,7 @@
     <modules>
         <BasicRum_Analytics>
             <active>true</active>
-            <codePool>community</codePool>
+            <codePool>local</codePool>
         </BasicRum_Analytics>
     </modules>
 </config>

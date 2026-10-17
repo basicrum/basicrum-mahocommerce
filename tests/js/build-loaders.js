@@ -9,8 +9,8 @@ const loaders = [
 ];
 
 for (const loader of loaders) {
-  const sourcePath = path.join(root, "js/basicrum/loaders", `${loader}.js`);
-  const outputPath = path.join(root, "js/basicrum/loaders", `${loader}.min.js`);
+  const sourcePath = path.join(root, "public/js/basicrum/loaders", `${loader}.js`);
+  const outputPath = path.join(root, "public/js/basicrum/loaders", `${loader}.min.js`);
   const result = UglifyJS.minify(fs.readFileSync(sourcePath, "utf8"), {
     compress: false,
     mangle: true,

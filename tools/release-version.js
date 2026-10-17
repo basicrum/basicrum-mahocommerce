@@ -5,7 +5,7 @@ const { execFileSync } = require("node:child_process");
 function releaseVersion(root, tag = "") {
   const version = execFileSync("xmllint", [
     "--xpath", "string(/config/modules/BasicRum_Analytics/version)",
-    path.join(root, "app/code/community/BasicRum/Analytics/etc/config.xml")
+    path.join(root, "app/code/local/BasicRum/Analytics/etc/config.xml")
   ], { encoding: "utf8" }).trim();
   const stableVersion = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
   if (!stableVersion.test(version)) {

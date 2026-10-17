@@ -7,13 +7,13 @@ const shopUrl = "https://shop.example.test/";
 const boomerangUrl = "https://assets.example.test/boomerang.js";
 const beaconUrl = "https://collector.example.test/beacon";
 const realBoomerang = fs.readFileSync(
-  path.join(root, "js/basicrum/boomerangs/boomerang-1.815.60.cutting-edge.min.js"),
+  path.join(root, "public/js/basicrum/boomerangs/boomerang-1.815.60.cutting-edge.min.js"),
   "utf8"
 );
 const silenceMs = 1500;
 
 function loaderPath(file) {
-  return path.join(root, "js/basicrum/loaders", file);
+  return path.join(root, "public/js/basicrum/loaders", file);
 }
 
 async function prepareRealPage(page, options = {}) {

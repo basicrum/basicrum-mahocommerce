@@ -12,7 +12,8 @@ class BasicRum_Analytics_Model_System_Config_Backend_BeaconEndpoint extends Mage
      * @return BasicRum_Analytics_Model_System_Config_Backend_BeaconEndpoint
      * @throws Mage_Core_Exception
      */
-    protected function _beforeSave()
+    #[\Override]
+    protected function _beforeSave(): self
     {
         $value = trim((string) $this->getValue());
 

@@ -20,7 +20,7 @@ class BasicRum_Analytics_Model_Setup_PrivacyDefault
     public static function getValueToPersist(
         bool $hasExplicitDefault,
         bool $hasExistingConfiguration
-    ) {
+    ): ?string {
         if ($hasExplicitDefault) {
             return null;
         }

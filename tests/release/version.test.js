@@ -8,7 +8,7 @@ const { releaseVersion } = require("../../tools/release-version");
 function fixture(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "basicrum-version-"));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const configDir = path.join(root, "app/code/community/BasicRum/Analytics/etc");
+  const configDir = path.join(root, "app/code/local/BasicRum/Analytics/etc");
   fs.mkdirSync(configDir, { recursive: true });
   fs.writeFileSync(path.join(configDir, "config.xml"),
     "<config><modules><BasicRum_Analytics><version>1.1.0</version></BasicRum_Analytics></modules></config>");

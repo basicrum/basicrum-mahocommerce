@@ -10,10 +10,11 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_ConsentInfo
     /**
      * Render consent guidance as a full-width configuration row.
      *
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return string
      */
-    public function render(Varien_Data_Form_Element_Abstract $element): string
+    #[\Override]
+    public function render(\Maho\Data\Form\Element\AbstractElement $element): string
     {
         $rowId = htmlspecialchars('row_' . $element->getHtmlId(), ENT_QUOTES, 'UTF-8');
         $allowSnippetId = htmlspecialchars($element->getHtmlId() . '_allow_snippet', ENT_QUOTES, 'UTF-8');
@@ -40,7 +41,7 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_ConsentInfo
             Call when monitoring is denied or withdrawn. This disables future collection and removes <code>RT</code>, <code>BA</code>, and legacy Basicrum consent cookies, but it cannot retract data already sent.
         </p>
     </div>
-    <p style="color: #555;"><code>OPT_IN_BASIC_RUM()</code> and <code>OPT_OUT_BASIC_RUM()</code> remain available as backward-compatible Magento 1 aliases.</p>
+    <p style="color: #555;"><code>OPT_IN_BASIC_RUM()</code> and <code>OPT_OUT_BASIC_RUM()</code> remain available as compatibility aliases for migrated integrations.</p>
     <p style="color: #555;">A deny before the first opt-in can be followed by an allow on the same page. After monitoring has started and consent is withdrawn, reload the page before re-granting; monitoring remains disabled for the rest of that page view.</p>
     <p style="color: #555;"><strong>Connect both decisions:</strong> place the allow snippet only in your consent tool's allow or grant callback, and the deny snippet in its deny, expiry, or withdrawal callback. Do not run the two snippets together.</p>
     <div style="margin-top: 12px;">

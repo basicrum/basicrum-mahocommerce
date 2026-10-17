@@ -22,6 +22,8 @@ basicrum_platform_save(array(
     'basicrum_analytics/privacy/opt_in_required' => $mode === 'consent' ? '1' : '0',
     'basicrum_analytics/developer/development_mode' => '0',
     'basicrum_analytics/developer/use_unminified_loaders' => '0',
+    'basicrum_analytics/wait_after_onload/enabled' => '0',
+    'basicrum_analytics/wait_after_onload/wait_ms' => '0',
 ));
 
 $store = Mage::app()->getStore('default');

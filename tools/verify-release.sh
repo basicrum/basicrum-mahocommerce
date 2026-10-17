@@ -9,10 +9,10 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 archive_path="$1"
 archive_name="$(basename "$archive_path")"
 module_version="$(xmllint --xpath 'string(/config/modules/BasicRum_Analytics/version)' \
-    "$repo_root/app/code/community/BasicRum/Analytics/etc/config.xml")"
-release_version="${archive_name#basicrum-magento-1-}"
+    "$repo_root/app/code/local/BasicRum/Analytics/etc/config.xml")"
+release_version="${archive_name#basicrum-mahocommerce-}"
 release_version="${release_version%.zip}"
-if [[ "$archive_name" != "basicrum-magento-1-$release_version.zip" \
+if [[ "$archive_name" != "basicrum-mahocommerce-$release_version.zip" \
     || ! "$release_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta|rc)\.[1-9][0-9]*)?$ \
     || "${release_version%%-*}" != "$module_version" ]]; then
     echo "Archive name does not match the module version: $archive_name" >&2
@@ -31,10 +31,10 @@ fi
 expected_files="$(bash "$repo_root/tools/package-files.sh")"
 unzip -tqq "$archive_path"
 diff -u \
-    <(printf '%s\n' "$expected_files" | sed 's|^|basicrum-magento-1/|') \
+    <(printf '%s\n' "$expected_files" | sed 's|^|basicrum-mahocommerce/|') \
     <(zipinfo -1 "$archive_path" | LC_ALL=C sort)
 while IFS= read -r package_file; do
     # Check the actual packaged bytes against this checkout, not just filenames.
-    unzip -p "$archive_path" "basicrum-magento-1/$package_file" | cmp - "$repo_root/$package_file"
+    unzip -p "$archive_path" "basicrum-mahocommerce/$package_file" | cmp - "$repo_root/$package_file"
 done <<< "$expected_files"
 echo "Verified release contents and checksum: $archive_name"

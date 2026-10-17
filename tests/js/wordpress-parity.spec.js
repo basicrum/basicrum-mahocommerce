@@ -20,14 +20,14 @@ function sha256(contents) {
   return createHash("sha256").update(contents).digest("hex");
 }
 
-function readMagentoAsset(asset) {
-  return fs.readFileSync(path.join(root, "js/basicrum", asset.replace(/^boomr\//, "boomerangs/")), "utf8");
+function readMahoAsset(asset) {
+  return fs.readFileSync(path.join(root, "public/js/basicrum", asset.replace(/^boomr\//, "boomerangs/")), "utf8");
 }
 
 // Exact, reviewed additions only. Do not strip arbitrary marked blocks: that
 // would let unrelated edits evade the upstream hash check. These additions
-// retain Magento's existing compatibility and delayed-beacon protections.
-const magentoAdditions = [
+// retain the inherited compatibility and delayed-beacon protections.
+const mahoAdditions = [
   {
     before: "      mainWin.basicRumBoomerangConfig = null;\n",
     addition: "      mainWin.basicRumConsentWithdrawn = true;\n",
@@ -75,24 +75,24 @@ for (const asset of [
   "boomr/boomerang-1.815.60.cutting-edge.min.js"
 ]) {
   test(`WordPress baseline: ${asset}`, () => {
-    expect(sha256(readMagentoAsset(asset)), `WordPress ${revision}: ${asset}`).toBe(hashes[asset]);
+    expect(sha256(readMahoAsset(asset)), `WordPress ${revision}: ${asset}`).toBe(hashes[asset]);
   });
 }
 
 test("consent wrapper embeds the unchanged WordPress standard loader", () => {
-  const consent = readMagentoAsset("loaders/consent-boomerang-loader-v1-15.js");
+  const consent = readMahoAsset("loaders/consent-boomerang-loader-v1-15.js");
   const wrapped = consent.match(
     /\/\* BEGIN BASICRUM STANDARD LOADER \*\/\n([\s\S]*?)\n    \/\* END BASICRUM STANDARD LOADER \*\//
   );
   expect(wrapped).not.toBeNull();
-  expect(wrapped[1]).toBe(readMagentoAsset("loaders/boomerang-loader-v15.js"));
+  expect(wrapped[1]).toBe(readMahoAsset("loaders/boomerang-loader-v15.js"));
 });
 
-test("consent wrapper differs from WordPress only by reviewed Magento additions", () => {
-  let consent = readMagentoAsset("loaders/consent-boomerang-loader-v1-15.js");
-  for (const { before, addition, after } of magentoAdditions) {
+test("consent wrapper differs from WordPress only by reviewed Maho compatibility additions", () => {
+  let consent = readMahoAsset("loaders/consent-boomerang-loader-v1-15.js");
+  for (const { before, addition, after } of mahoAdditions) {
     const parts = consent.split(before + addition + after);
-    expect(parts.length, `Expected exactly one Magento addition: ${addition}`).toBe(2);
+    expect(parts.length, `Expected exactly one Maho addition: ${addition}`).toBe(2);
     consent = parts.join(before + after);
   }
   expect(sha256(consent)).toBe(hashes["loaders/consent-boomerang-loader-v1-15.js"]);

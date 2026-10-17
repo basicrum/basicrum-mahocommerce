@@ -8,7 +8,7 @@ class BasicRum_Analytics_Model_System_Config_Source_Version
      *
      * @return array
      */
-    public function toOptionArray()
+    public function toOptionArray(): array
     {
         return array(
             array('value' => 'v1.815.60', 'label' => '1.815.60 - cutting-edge - 29 KB (gzipped)')

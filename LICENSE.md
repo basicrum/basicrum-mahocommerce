@@ -1,4 +1,4 @@
-Basicrum - Real User Monitoring for Magento 1
+Basicrum - Real User Monitoring for Maho Commerce
 Copyright (C) 2026 Tsvetan Stoychev and the Basicrum contributors
 
 This program is free software; you can redistribute it and/or modify it under

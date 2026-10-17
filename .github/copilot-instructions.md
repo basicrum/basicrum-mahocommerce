@@ -1,135 +1,16 @@
-# GitHub Copilot Instructions for Basicrum Analytics (Magento 1)
+# Basicrum Analytics for Maho Commerce
 
-## Module Purpose
-This module integrates **Boomerang.js** (Real User Monitoring) into Magento 1 stores to capture frontend performance analytics. It sends beacon data to a configurable endpoint for analysis via the Basicrum platform.
+This module integrates Boomerang Real User Monitoring into Maho Commerce 26.9+ on PHP 8.3+. Use the Maho documentation and the pinned Maho integration fixture as the platform reference.
 
-### Key Features
-- **RUM Data Collection**: Captures page load timing, resource timing, and continuity metrics.
-- **GDPR/Privacy Compliance**: Uses consent-controlled loading by default for new installations.
-- **Configurable Beacon Endpoint**: Admin can specify where analytics data is sent.
-- **Async Loading**: Boomerang JS loads asynchronously to minimize performance impact.
-
-## Project Context
-- **Framework**: Magento 1 (OpenMage LTS) / Modernized M1.
-- **Module Name**: `BasicRum_Analytics`
-- **Module Version**: `1.1.0`
-- **Code Pool**: `community`
-- **Deployment**: Uses `modman` for file mapping.
-
-## Coding Standards & Environment
-- **PHP Version**: **PHP 7+** (must remain compatible with PHP 7 while also working on the latest PHP 8.x). 
-  - Use `declare(strict_types=1);`.
-  - Use return type declarations compatible with PHP 7.
-  - Avoid PHP 8-only features (attributes like `#[\Override]`, union types, `str_starts_with`, etc.).
-- **Architecture**:
-  - Follow Magento 1 class naming conventions (e.g., `BasicRum_Analytics_Block_Boomerang_Loader`).
-  - **No Namespaces**: Do not use PHP namespaces; use underscores for class separation.
-  - Use `Mage::` static factory methods (`Mage::getModel()`, `Mage::helper()`, `Mage::getSingleton()`).
-
-## Module Architecture
-
-### Directory Structure
-```
-app/code/community/BasicRum/Analytics/
-├── Block/
-│   └── Boomerang/
-│       └── Loader.php              # Renders JS snippet before the closing body tag
-├── Helper/
-│   ├── Data.php                    # Config retrieval methods
-│   └── PageTypeDetector.php        # Layout handle-based page type detection
-└── etc/
-    ├── config.xml                  # Module registration & defaults
-    ├── system.xml                  # Admin configuration fields
-    └── adminhtml.xml               # Admin ACL/menu
-
-js/basicrum/
-├── boomerangs/
-│   └── boomerang-1.815.60.cutting-edge.min.js   # Core Boomerang library
-└── loaders/
-    ├── boomerang-loader-v15.js                  # Standard async loader (dev)
-    ├── boomerang-loader-v15.min.js              # Standard async loader (prod)
-    ├── consent-boomerang-loader-v1-15.js        # GDPR opt-in loader (dev)
-    └── consent-boomerang-loader-v1-15.min.js    # GDPR opt-in loader (prod)
-```
-
-### Key Classes
-
-| Class | Purpose |
-|-------|---------|
-| `BasicRum_Analytics_Block_Boomerang_Loader` | Generates the Boomerang JS inline script. Injected into the `before_body_end` reference. |
-| `BasicRum_Analytics_Helper_Data` | Retrieves and normalizes scoped admin configuration, including privacy and HTTP policy. |
-| `BasicRum_Analytics_Helper_PageTypeDetector` | Detects page type from layout handles (home, product, category, etc.). |
-
-### Configuration Paths
-Access via `Mage::getStoreConfig()` or `Mage::getStoreConfigFlag()`:
-
-| Path | Type | Description |
-|------|------|-------------|
-| `basicrum_analytics/general/enabled` | bool | Enable/disable the module |
-| `basicrum_analytics/privacy/opt_in_required` | bool | Require a current-page opt-in signal before loading |
-| `basicrum_analytics/privacy/strip_query_string` | bool | Redact query strings in monitored URLs before beaconing |
-| `basicrum_analytics/general/beacon_endpoint` | string | URL where beacons are sent |
-| `basicrum_analytics/general/brum_site_id` | string | Required Basicrum backend UUID v4 |
-| `basicrum_analytics/wait_after_onload/enabled` | bool | Enable delayed beacon sending |
-| `basicrum_analytics/wait_after_onload/wait_ms` | int | Milliseconds to wait before sending beacon |
-| `basicrum_analytics/developer/development_mode` | bool | Allow HTTP Beacon Endpoints only for local testing |
-| `basicrum_analytics/developer/use_unminified_loaders` | bool | Load non-minified JS for debugging |
-
-### JavaScript Assets
-Located in `js/basicrum/` and mapped by Modman to Magento's root-level `js/basicrum/` directory:
-
-| File | Purpose |
-|------|---------|
-| `boomerangs/boomerang-1.815.60.cutting-edge.min.js` | Core Boomerang library |
-| `loaders/boomerang-loader-v15.min.js` | Standard async loader (production) |
-| `loaders/boomerang-loader-v15.js` | Standard async loader (development) |
-| `loaders/consent-boomerang-loader-v1-15.min.js` | GDPR-compliant loader (production) |
-| `loaders/consent-boomerang-loader-v1-15.js` | GDPR-compliant loader (development) |
-
-### Layout Integration
-The block is added to the `before_body_end` reference in `basicrum_analytics.xml`:
-```xml
-<reference name="before_body_end">
-    <block type="basicrum_analytics/boomerang_loader" name="boomerang" />
-</reference>
-```
-
-## Specific Instructions
-1. **Modman**: When adding new files, always verify if the `modman` file needs updating to map the file from the source to the Magento root.
-2. **Layouts**: Layout updates reside in `app/design/frontend/base/default/layout/`.
-3. **JavaScript**: Static assets under `js/basicrum/` are mapped by Modman to the Magento root `js/basicrum/` directory.
-4. **Configuration**:
-   - `config.xml`: Module version, models, blocks, helpers, events.
-   - `system.xml`: Backend configuration fields (ACL, Scope).
-   - `adminhtml.xml`: Admin menu items and ACL resources.
-   - Keep Beacon Endpoint and Brum Site ID visible while the module is disabled. Privacy controls and consent guidance live in General Settings, with `config_path` preserving the established `basicrum_analytics/privacy/*` storage paths. Runtime-only privacy, wait, and developer fields depend on `basicrum_analytics/general/enabled`; preserve those dependencies and Magento's scoped inheritance behavior. The wait toggle uses the unique admin field ID `wait_enabled` with `config_path` mapped to the established public path `basicrum_analytics/wait_after_onload/enabled`, avoiding duplicate dependency node names in Magento's merged XML.
-
-## Important Patterns
-- **Helpers**: Always access helpers via `Mage::helper('basicrum_analytics')`.
-- **Config Flags**: Use `Mage::getStoreConfigFlag()` for boolean values.
-- **Config Values**: Use `Mage::getStoreConfig()` for string/text values.
-- **Logs**: Use `Mage::log()` for debugging, ensuring the log file is specified if necessary.
-- **Translations**: Wrap user-facing strings in `$this->__('String')`.
-- **Inline Scripts**: Use HEREDOC syntax for multi-line JavaScript generation.
-
-## Boomerang Configuration
-The module configures Boomerang with these settings:
-- `beacon_url`: From admin config.
-- `instrument_xhr`: Disabled.
-- `strip_query_string`: Scoped privacy setting; disabled by default for compatibility.
-- `Continuity.enabled`: Tracks user interaction metrics.
-- `ResourceTiming.enabled`: Captures resource load times.
-- `secure_cookie` & `same_site_cookie`: Set to `true` and `"Strict"` for security.
-
-## File Headers
-Ensure all new PHP files start with:
-```php
-<?php
-declare(strict_types=1);
-```
-
-## Extending the Module
-When adding new features:
-1. **New Config Options**: Add fields to `system.xml`, defaults to `config.xml`, accessor methods to `Helper/Data.php`.
-2. **New Blocks**: Create in `Block/` directory, register in `config.xml` under `<blocks>`.
-3. **Page Type Detection**: Handled by `Helper/PageTypeDetector.php` using layout handles. Add new mappings there if needed.
+- Module: `BasicRum_Analytics`, code pool `local`, version `1.1.0`.
+- PHP lives in `app/code/local/BasicRum/Analytics`; keep underscore module class names and the `Mage::` factories used by Maho's module system.
+- Use `declare(strict_types=1)`, PHP 8.3+ types, `#[\Override]` on overrides, and Maho namespaced library classes such as `\Maho\Data\Form\Element\AbstractElement`.
+- Static source files live under `public/js/basicrum/`; their browser URLs use `/js/basicrum/` through `Mage::getBaseUrl('js')`.
+- Keep `modman` mappings in sync with all runtime files. Composer metadata uses `maho-module`; Maho's Composer plugin reads `modman` and publishes `public/` assets.
+- Bootstrap Maho with `vendor/autoload.php`. Install with `./maho install`, apply migrations with `./maho migrate`, and refresh generated class maps with `composer dump-autoload` after module changes.
+- Preserve the existing `basicrum_analytics/*` configuration paths, all scopes, backend validation, consent defaults, HTTP policy, and inheritance.
+- Keep collector identity fields visible while disabled. Runtime controls use native field dependencies. The wait toggle uses the distinct `wait_enabled` form ID and the established `basicrum_analytics/wait_after_onload/enabled` storage path.
+- Inject only into the frontend `before_body_end` layout reference. Emit `p_gen=maho`, and preserve page labels and consent callback compatibility.
+- Keep the canonical WordPress loader parity checks; regenerate both minified loaders after source changes. Do not modify the vendored Boomerang bundle.
+- Test with `php tests/php/run.php`, `npm test`, `bash tests/check-package.sh`, and `bash tests/platform/run.sh maho /path/to/disposable-maho`. The integration runner installs the built ZIP when `BASICRUM_TEST_RELEASE_ZIP` is set and runs Playwright against the real Maho storefront/admin.
+- CI targets Maho 26.9.1 on PHP 8.3/8.4/8.5 and MariaDB 10.11. Do not reintroduce Magento CE or OpenMage test fixtures.

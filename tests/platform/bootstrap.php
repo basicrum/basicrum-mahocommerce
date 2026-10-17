@@ -14,14 +14,18 @@ if ($platformRoot === false || !is_dir($platformRoot)) {
     exit(2);
 }
 
-if (!in_array($platform, array('magento-ce', 'openmage'), true)) {
+if ($platform !== 'maho') {
     fwrite(STDERR, "Unsupported platform: {$platform}\n");
     exit(2);
 }
 
 chdir($platformRoot);
 
-require $platformRoot . '/app/Mage.php';
+require $platformRoot . '/vendor/autoload.php';
+
+if (Mage::getVersion() !== '26.9.1') {
+    throw new RuntimeException('The integration fixture must run the pinned Maho 26.9.1 release.');
+}
 
 Mage::app('default');
 

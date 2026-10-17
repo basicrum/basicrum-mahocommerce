@@ -25,15 +25,15 @@ write_checksum() {
 }
 
 version="$(node "$repo_root/tools/release-version.js")"
-archive_name="basicrum-magento-1-$version.zip"
+archive_name="basicrum-mahocommerce-$version.zip"
 bash "$repo_root/tools/build-release.sh" "$test_dir/output"
 archive="$test_dir/output/$archive_name"
 bash "$repo_root/tools/verify-release.sh" "$archive"
 expect_failure bash "$repo_root/tools/build-release.sh" "$test_dir/output"
 
-# Prerelease packaging must not require changing Magento's setup version.
+# Prerelease packaging must not require changing Maho's setup version.
 BASICRUM_RELEASE_TAG="v$version-rc.1" bash "$repo_root/tools/build-release.sh" "$test_dir/prerelease"
-test -f "$test_dir/prerelease/basicrum-magento-1-$version-rc.1.zip"
+test -f "$test_dir/prerelease/basicrum-mahocommerce-$version-rc.1.zip"
 expect_failure env BASICRUM_RELEASE_TAG=v999.0.0 bash "$repo_root/tools/build-release.sh" "$test_dir/mismatch"
 test ! -d "$test_dir/mismatch"
 
@@ -45,7 +45,7 @@ printf 'invalid checksum\n' > "$invalid.sha256"
 expect_failure bash "$repo_root/tools/verify-release.sh" "$invalid"
 write_checksum "$invalid"
 bash "$repo_root/tools/verify-release.sh" "$invalid"
-zip -qd "$invalid" basicrum-magento-1/js/basicrum/LICENSE.txt
+zip -qd "$invalid" basicrum-mahocommerce/public/js/basicrum/LICENSE.txt
 write_checksum "$invalid"
 expect_failure bash "$repo_root/tools/verify-release.sh" "$invalid"
 
@@ -56,22 +56,22 @@ write_checksum "$invalid"
 expect_failure bash "$repo_root/tools/verify-release.sh" "$invalid"
 
 cp "$archive" "$invalid"
-mkdir -p "$test_dir/basicrum-magento-1"
-printf 'changed runtime bytes\n' > "$test_dir/basicrum-magento-1/README.md"
-(cd "$test_dir" && zip -q "$invalid" basicrum-magento-1/README.md)
+mkdir -p "$test_dir/basicrum-mahocommerce"
+printf 'changed runtime bytes\n' > "$test_dir/basicrum-mahocommerce/README.md"
+(cd "$test_dir" && zip -q "$invalid" basicrum-mahocommerce/README.md)
 write_checksum "$invalid"
 expect_failure bash "$repo_root/tools/verify-release.sh" "$invalid"
 
 # The native runner must deploy the verified ZIP, and stop for a broken one.
-mkdir -p "$test_dir/platform/app"
-touch "$test_dir/platform/app/Mage.php"
-BASICRUM_TEST_RELEASE_ZIP="$archive" bash "$repo_root/tests/platform/deploy-module.sh" openmage "$test_dir/platform"
+mkdir -p "$test_dir/platform/public"
+touch "$test_dir/platform/maho"
+BASICRUM_TEST_RELEASE_ZIP="$archive" bash "$repo_root/tests/platform/deploy-module.sh" maho "$test_dir/platform"
 while read -r source_path destination_path extra; do
     if [[ -n "${source_path:-}" && "${source_path:0:1}" != "#" ]]; then
         cmp "$repo_root/$source_path" "$test_dir/platform/$destination_path"
     fi
 done < "$repo_root/modman"
 expect_failure env BASICRUM_TEST_RELEASE_ZIP="$invalid" \
-    bash "$repo_root/tests/platform/deploy-module.sh" openmage "$test_dir/platform"
+    bash "$repo_root/tests/platform/deploy-module.sh" maho "$test_dir/platform"
 
 echo "Release archive, checksum, rejection, and packaged deployment tests passed."

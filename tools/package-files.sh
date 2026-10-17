@@ -2,16 +2,16 @@
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
-package_files=(README.md LICENSE.md THIRD-PARTY-NOTICES.txt modman)
+package_files=(README.md LICENSE.md THIRD-PARTY-NOTICES.txt composer.json modman)
 
 while read -r source_path destination_path extra; do
     if [[ -z "${source_path:-}" || "${source_path:0:1}" == "#" ]]; then
         continue
     fi
-    # The ZIP is copied directly into Magento's directory layout. Reject mapping
+    # The ZIP is copied directly into Maho's directory layout. Reject mapping
     # changes that would make that layout disagree with a Modman installation.
     if [[ -n "${extra:-}" || "$source_path" != "$destination_path" \
-        || ! "$source_path" =~ ^(app/|js/basicrum/)[a-zA-Z0-9_./-]+$ \
+        || ! "$source_path" =~ ^(app/|public/js/basicrum/)[a-zA-Z0-9_./-]+$ \
         || "/$source_path/" == *"/../"* || "/$source_path/" == *"/./"* \
         || "$source_path" == *"//"* ]]; then
         echo "Invalid or non-identity modman mapping: $source_path $destination_path" >&2
@@ -20,7 +20,7 @@ while read -r source_path destination_path extra; do
     package_files+=("$source_path")
 done < modman
 
-if [[ -n "$(find app js -type l -print)" ]]; then
+if [[ -n "$(find app public/js -type l -print)" ]]; then
     echo "Runtime symlinks cannot be included in a release." >&2
     exit 1
 fi
@@ -40,6 +40,6 @@ while IFS= read -r runtime_file; do
         echo "Runtime file is missing from modman: $runtime_file" >&2
         exit 1
     fi
-done < <(find app js -type f -print)
+done < <(find app public/js -type f -print)
 
 printf '%s\n' "${package_files[@]}" | LC_ALL=C sort

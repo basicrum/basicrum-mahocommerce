@@ -10,11 +10,11 @@ for (const loader of [
   "consent-boomerang-loader-v1-15"
 ]) {
   const source = fs.readFileSync(
-    path.join(root, "js/basicrum/loaders", `${loader}.js`),
+    path.join(root, "public/js/basicrum/loaders", `${loader}.js`),
     "utf8"
   );
   const actual = fs.readFileSync(
-    path.join(root, "js/basicrum/loaders", `${loader}.min.js`),
+    path.join(root, "public/js/basicrum/loaders", `${loader}.min.js`),
     "utf8"
   );
   const result = UglifyJS.minify(source, {

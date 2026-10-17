@@ -15,10 +15,11 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
     /**
      * Render the native field row and monitoring status after the Site ID.
      *
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return string
      */
-    public function render(Varien_Data_Form_Element_Abstract $element): string
+    #[\Override]
+    public function render(\Maho\Data\Form\Element\AbstractElement $element): string
     {
         $html = parent::render($element);
 
@@ -30,12 +31,13 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
     }
 
     /**
-     * Add accessible, field-level feedback without replacing Magento's input.
+     * Add accessible, field-level feedback without replacing Maho's input.
      *
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return string
      */
-    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element): string
+    #[\Override]
+    protected function _getElementHtml(\Maho\Data\Form\Element\AbstractElement $element): string
     {
         $isEnabled = $this->isMonitoringEnabled($element);
         $message = $isEnabled ? $this->getValidationMessage($element) : null;
@@ -72,10 +74,10 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
     }
 
     /**
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return string|null
      */
-    private function getValidationMessage(Varien_Data_Form_Element_Abstract $element)
+    private function getValidationMessage(\Maho\Data\Form\Element\AbstractElement $element): ?string
     {
         $value = trim((string) $element->getValue());
 
@@ -111,10 +113,10 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
     }
 
     /**
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return bool
      */
-    private function isMonitoringEnabled(Varien_Data_Form_Element_Abstract $element): bool
+    private function isMonitoringEnabled(\Maho\Data\Form\Element\AbstractElement $element): bool
     {
         return (string) $this->getFormValue(
             $element,
@@ -124,10 +126,10 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
     }
 
     /**
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return bool
      */
-    private function hasValidRequiredSettings(Varien_Data_Form_Element_Abstract $element): bool
+    private function hasValidRequiredSettings(\Maho\Data\Form\Element\AbstractElement $element): bool
     {
         $beacon = trim((string) $this->getFormValue(
             $element,
@@ -145,10 +147,10 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
     }
 
     /**
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return bool
      */
-    private function isConsentRequired(Varien_Data_Form_Element_Abstract $element): bool
+    private function isConsentRequired(\Maho\Data\Form\Element\AbstractElement $element): bool
     {
         return (string) $this->getFormValue(
             $element,
@@ -160,16 +162,16 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
     /**
      * Read the resolved form value so Website and Store View inheritance works.
      *
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @param string $fieldId
      * @param string $configPath
      * @return mixed
      */
     private function getFormValue(
-        Varien_Data_Form_Element_Abstract $element,
+        \Maho\Data\Form\Element\AbstractElement $element,
         string $fieldId,
         string $configPath
-    ) {
+    ): mixed {
         $form = $element->getForm();
         $field = $form ? $form->getElement($fieldId) : null;
 
@@ -177,25 +179,25 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
     }
 
     /**
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return bool
      */
-    private function isBeaconElement(Varien_Data_Form_Element_Abstract $element): bool
+    private function isBeaconElement(\Maho\Data\Form\Element\AbstractElement $element): bool
     {
         return $this->hasIdSuffix($element->getHtmlId(), '_beacon_endpoint');
     }
 
     /**
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return bool
      */
-    private function isSiteIdElement(Varien_Data_Form_Element_Abstract $element): bool
+    private function isSiteIdElement(\Maho\Data\Form\Element\AbstractElement $element): bool
     {
         return $this->hasIdSuffix($element->getHtmlId(), '_brum_site_id');
     }
 
     /**
-     * PHP 7.4-compatible suffix check.
+     * Check the field ID suffix.
      *
      * @param string $value
      * @param string $suffix
@@ -203,14 +205,14 @@ class BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSettin
      */
     private function hasIdSuffix(string $value, string $suffix): bool
     {
-        return substr($value, -strlen($suffix)) === $suffix;
+        return str_ends_with($value, $suffix);
     }
 
     /**
-     * @param Varien_Data_Form_Element_Abstract $element
+     * @param \Maho\Data\Form\Element\AbstractElement $element
      * @return string
      */
-    private function getMonitoringStatusHtml(Varien_Data_Form_Element_Abstract $element): string
+    private function getMonitoringStatusHtml(\Maho\Data\Form\Element\AbstractElement $element): string
     {
         $helper = Mage::helper('basicrum_analytics');
 

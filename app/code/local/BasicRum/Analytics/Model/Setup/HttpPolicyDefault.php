@@ -10,7 +10,7 @@ class BasicRum_Analytics_Model_Setup_HttpPolicyDefault
      * Return scoped policy values for existing Beacon Endpoints.
      *
      * Existing explicit HTTP-policy values always win. Invalid and duplicate
-     * rows are ignored so the installer cannot write outside Magento scopes.
+     * rows are ignored so the installer cannot write outside valid configuration scopes.
      *
      * @param array<int, array<string, mixed>> $beaconRows
      * @param array<int, array<string, mixed>> $explicitPolicyRows
@@ -57,7 +57,7 @@ class BasicRum_Analytics_Model_Setup_HttpPolicyDefault
      * @param array<string, mixed> $row
      * @return string|null
      */
-    private static function getScopeKey(array $row)
+    private static function getScopeKey(array $row): ?string
     {
         $allowedScopes = array('default', 'websites', 'stores');
         $scope = isset($row['scope']) ? (string) $row['scope'] : '';

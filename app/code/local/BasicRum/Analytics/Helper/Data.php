@@ -44,7 +44,7 @@ class BasicRum_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
      * Get beacon endpoint URL
      * @return string|null
      */
-    public function getBeaconEndpoint()
+    public function getBeaconEndpoint(): ?string
     {
         $url = trim((string) Mage::getStoreConfig('basicrum_analytics/general/beacon_endpoint'));
 
@@ -65,7 +65,7 @@ class BasicRum_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
      * Get the Brum Site ID
      * @return string|null
      */
-    public function getBrumSiteId()
+    public function getBrumSiteId(): ?string
     {
         $value = trim((string) Mage::getStoreConfig('basicrum_analytics/general/brum_site_id'));
 
@@ -78,7 +78,7 @@ class BasicRum_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
      * @param mixed $value
      * @return bool
      */
-    public static function isValidBeaconEndpoint($value): bool
+    public static function isValidBeaconEndpoint(mixed $value): bool
     {
         if (!is_string($value) || $value === '' || filter_var($value, FILTER_VALIDATE_URL) === false) {
             return false;
@@ -98,7 +98,7 @@ class BasicRum_Analytics_Helper_Data extends Mage_Core_Helper_Abstract
      * @param mixed $value
      * @return bool
      */
-    public static function isValidBrumSiteId($value): bool
+    public static function isValidBrumSiteId(mixed $value): bool
     {
         return is_string($value) && preg_match(self::BRUM_SITE_ID_PATTERN, $value) === 1;
     }

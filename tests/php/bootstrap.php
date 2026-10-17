@@ -15,16 +15,20 @@ class Mage_Core_Helper_Abstract
 
 class Mage_Core_Block_Abstract
 {
+    protected function _toHtml()
+    {
+        return '';
+    }
 }
 
 class Mage_Adminhtml_Block_System_Config_Form_Field extends Mage_Core_Block_Abstract
 {
-    protected function _getElementHtml(Varien_Data_Form_Element_Abstract $element)
+    protected function _getElementHtml(\Maho\Data\Form\Element\AbstractElement $element)
     {
         return $element->getElementHtml();
     }
 
-    public function render(Varien_Data_Form_Element_Abstract $element)
+    public function render(\Maho\Data\Form\Element\AbstractElement $element)
     {
         return '<tr id="row_' . $element->getHtmlId() . '"><td class="value">'
             . $this->_getElementHtml($element)
@@ -36,7 +40,7 @@ class Basicrum_Test_Form
 {
     private $elements = array();
 
-    public function addElement($id, Varien_Data_Form_Element_Abstract $element)
+    public function addElement($id, \Maho\Data\Form\Element\AbstractElement $element)
     {
         $this->elements[$id] = $element;
         $element->setForm($this);
@@ -49,7 +53,7 @@ class Basicrum_Test_Form
     }
 }
 
-class Varien_Data_Form_Element_Abstract
+class Basicrum_Test_Form_Element
 {
     private $htmlId;
     private $value;
@@ -508,3 +512,5 @@ function basicrum_assert_throws(callable $callback, $expectedClass, $message)
 
     throw new RuntimeException($message . ': no exception was thrown');
 }
+
+class_alias(Basicrum_Test_Form_Element::class, \Maho\Data\Form\Element\AbstractElement::class);

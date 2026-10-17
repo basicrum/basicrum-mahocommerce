@@ -4,16 +4,16 @@ declare(strict_types=1);
 $root = dirname(__DIR__, 2);
 
 require __DIR__ . '/bootstrap.php';
-require $root . '/app/code/community/BasicRum/Analytics/Helper/Data.php';
-require $root . '/app/code/community/BasicRum/Analytics/Block/Boomerang/Loader.php';
-require $root . '/app/code/community/BasicRum/Analytics/Model/System/Config/Backend/SiteId.php';
-require $root . '/app/code/community/BasicRum/Analytics/Model/System/Config/Backend/BeaconEndpoint.php';
-require $root . '/app/code/community/BasicRum/Analytics/Model/Setup/HttpPolicyDefault.php';
-require $root . '/app/code/community/BasicRum/Analytics/Model/Setup/PrivacyDefault.php';
-require $root . '/app/code/community/BasicRum/Analytics/Model/System/Config/Source/ConsentMode.php';
-require $root . '/app/code/community/BasicRum/Analytics/Model/System/Config/Source/HttpPolicy.php';
-require $root . '/app/code/community/BasicRum/Analytics/Block/Adminhtml/System/Config/Form/Field/ConsentInfo.php';
-require $root . '/app/code/community/BasicRum/Analytics/Block/Adminhtml/System/Config/Form/Field/RequiredSetting.php';
+require $root . '/app/code/local/BasicRum/Analytics/Helper/Data.php';
+require $root . '/app/code/local/BasicRum/Analytics/Block/Boomerang/Loader.php';
+require $root . '/app/code/local/BasicRum/Analytics/Model/System/Config/Backend/SiteId.php';
+require $root . '/app/code/local/BasicRum/Analytics/Model/System/Config/Backend/BeaconEndpoint.php';
+require $root . '/app/code/local/BasicRum/Analytics/Model/Setup/HttpPolicyDefault.php';
+require $root . '/app/code/local/BasicRum/Analytics/Model/Setup/PrivacyDefault.php';
+require $root . '/app/code/local/BasicRum/Analytics/Model/System/Config/Source/ConsentMode.php';
+require $root . '/app/code/local/BasicRum/Analytics/Model/System/Config/Source/HttpPolicy.php';
+require $root . '/app/code/local/BasicRum/Analytics/Block/Adminhtml/System/Config/Form/Field/ConsentInfo.php';
+require $root . '/app/code/local/BasicRum/Analytics/Block/Adminhtml/System/Config/Form/Field/RequiredSetting.php';
 
 class Basicrum_Test_SiteIdBackend extends BasicRum_Analytics_Model_System_Config_Backend_SiteId
 {
@@ -51,7 +51,7 @@ function basicrum_config_dependency_map(SimpleXMLElement $field, $defaultFieldse
 }
 
 $tests['general privacy controls preserve paths scopes and installation defaults'] = function () use ($root) {
-    $xml = simplexml_load_file($root . '/app/code/community/BasicRum/Analytics/etc/system.xml');
+    $xml = simplexml_load_file($root . '/app/code/local/BasicRum/Analytics/etc/system.xml');
     $groups = $xml->sections->basicrum_analytics->groups;
     basicrum_assert_true(!isset($groups->privacy), 'privacy must not have a separate admin accordion');
     foreach (array('strip_query_string', 'opt_in_required') as $name) {
@@ -65,7 +65,7 @@ $tests['general privacy controls preserve paths scopes and installation defaults
             basicrum_assert_same('1', (string) $field->{'show_in_' . $scope}, $name . ': missing scope ' . $scope);
         }
     }
-    $defaults = simplexml_load_file($root . '/app/code/community/BasicRum/Analytics/etc/config.xml')
+    $defaults = simplexml_load_file($root . '/app/code/local/BasicRum/Analytics/etc/config.xml')
         ->default->basicrum_analytics;
     basicrum_assert_same('0', (string) $defaults->general->enabled, 'monitoring must be disabled by default');
     basicrum_assert_same('1', (string) $defaults->privacy->opt_in_required, 'new installs must require consent');
@@ -105,9 +105,9 @@ $tests['admin HTTP policy choices explain production and development behavior'] 
 $tests['admin consent guidance is a full-width dependent row'] = function () use ($root) {
     $elementId = 'basicrum_analytics_general_consent_integration_info';
     $renderer = new BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_ConsentInfo();
-    $html = $renderer->render(new Varien_Data_Form_Element_Abstract($elementId));
+    $html = $renderer->render(new \Maho\Data\Form\Element\AbstractElement($elementId));
 
-    basicrum_assert_contains('id="row_' . $elementId . '"', $html, 'guidance row must use Magento field row ID');
+    basicrum_assert_contains('id="row_' . $elementId . '"', $html, 'guidance row must use Maho field row ID');
     basicrum_assert_contains('colspan="4"', $html, 'guidance must span the configuration table');
     basicrum_assert_contains(
         'OPT_IN_BASICRUM_LOADER_WRAPPER()',
@@ -117,7 +117,7 @@ $tests['admin consent guidance is a full-width dependent row'] = function () use
     basicrum_assert_contains(
         'OPT_IN_BASIC_RUM()',
         $html,
-        'guidance must retain the legacy Magento callback alias'
+        'guidance must retain the legacy Maho callback alias'
     );
     basicrum_assert_contains(
         'Allow or grant callback',
@@ -147,7 +147,7 @@ $tests['admin consent guidance is a full-width dependent row'] = function () use
     basicrum_assert_contains(
         'https://shop.example.test/js/basicrum/admin/consent-info.js',
         $html,
-        'guidance must load the copy-action behavior from the Magento JS base URL'
+        'guidance must load the copy-action behavior from the Maho JS base URL'
     );
     basicrum_assert_contains(
         'overflow-wrap: anywhere',
@@ -196,7 +196,7 @@ $tests['admin consent guidance is a full-width dependent row'] = function () use
         'deny example must not opt in'
     );
 
-    $xml = simplexml_load_file($root . '/app/code/community/BasicRum/Analytics/etc/system.xml');
+    $xml = simplexml_load_file($root . '/app/code/local/BasicRum/Analytics/etc/system.xml');
     basicrum_assert_true($xml !== false, 'system configuration XML must parse');
     $privacyFields = $xml->sections->basicrum_analytics->groups->general->fields;
     basicrum_assert_same(
@@ -212,7 +212,7 @@ $tests['admin consent guidance is a full-width dependent row'] = function () use
     basicrum_assert_same(
         'adminhtml/system_config_source_yesno',
         (string) $privacyFields->strip_query_string->source_model,
-        'query-string privacy must use a scoped Magento Yes/No control'
+        'query-string privacy must use a scoped Maho Yes/No control'
     );
     basicrum_assert_contains(
         '?qs-redacted',
@@ -227,7 +227,7 @@ $tests['admin consent guidance is a full-width dependent row'] = function () use
 };
 
 $tests['admin hides runtime controls while monitoring is disabled'] = function () use ($root) {
-    $xml = simplexml_load_file($root . '/app/code/community/BasicRum/Analytics/etc/system.xml');
+    $xml = simplexml_load_file($root . '/app/code/local/BasicRum/Analytics/etc/system.xml');
     basicrum_assert_true($xml !== false, 'system configuration XML must parse');
 
     $groups = $xml->sections->basicrum_analytics->groups;
@@ -259,7 +259,7 @@ $tests['admin hides runtime controls while monitoring is disabled'] = function (
         (string) $generalFields->boomerang_version->label,
         'Boomerang label must match WordPress'
     );
-    $adminAcl = simplexml_load_file($root . '/app/code/community/BasicRum/Analytics/etc/adminhtml.xml');
+    $adminAcl = simplexml_load_file($root . '/app/code/local/BasicRum/Analytics/etc/adminhtml.xml');
     basicrum_assert_same(
         'Basicrum Settings',
         (string) $adminAcl->acl->resources->admin->children->system->children->config
@@ -336,9 +336,9 @@ $tests['enabled incomplete configuration is visibly inactive'] = function () use
     basicrum_test_reset();
 
     $form = new Basicrum_Test_Form();
-    $enabled = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_enabled', '1');
-    $beacon = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_beacon_endpoint', '');
-    $siteId = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_brum_site_id', '');
+    $enabled = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_enabled', '1');
+    $beacon = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_beacon_endpoint', '');
+    $siteId = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_brum_site_id', '');
     $form->addElement('basicrum_analytics_general_enabled', $enabled)
         ->addElement('basicrum_analytics_general_beacon_endpoint', $beacon)
         ->addElement('basicrum_analytics_general_brum_site_id', $siteId);
@@ -377,7 +377,7 @@ $tests['enabled incomplete configuration is visibly inactive'] = function () use
         'the warning must explain the runtime consequence'
     );
 
-    $xml = simplexml_load_file($root . '/app/code/community/BasicRum/Analytics/etc/system.xml');
+    $xml = simplexml_load_file($root . '/app/code/local/BasicRum/Analytics/etc/system.xml');
     $generalFields = $xml->sections->basicrum_analytics->groups->general->fields;
     basicrum_assert_same(
         'basicrum_analytics/adminhtml_system_config_form_field_requiredSetting',
@@ -400,12 +400,12 @@ $tests['admin required-setting feedback respects validity enabled state and reso
     $renderer = new BasicRum_Analytics_Block_Adminhtml_System_Config_Form_Field_RequiredSetting();
 
     $validForm = new Basicrum_Test_Form();
-    $validEnabled = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_enabled', '1');
-    $validBeacon = new Varien_Data_Form_Element_Abstract(
+    $validEnabled = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_enabled', '1');
+    $validBeacon = new \Maho\Data\Form\Element\AbstractElement(
         'basicrum_analytics_general_beacon_endpoint',
         'https://collector.example.test/beacon'
     );
-    $validSiteId = new Varien_Data_Form_Element_Abstract(
+    $validSiteId = new \Maho\Data\Form\Element\AbstractElement(
         'basicrum_analytics_general_brum_site_id',
         '550e8400-e29b-41d4-a716-446655440000'
     );
@@ -414,7 +414,7 @@ $tests['admin required-setting feedback respects validity enabled state and reso
         ->addElement('basicrum_analytics_general_brum_site_id', $validSiteId)
         ->addElement(
             'basicrum_analytics_general_opt_in_required',
-            new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_opt_in_required', '0')
+            new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_opt_in_required', '0')
         );
 
     $validHtml = $renderer->render($validBeacon) . $renderer->render($validSiteId);
@@ -432,9 +432,9 @@ $tests['admin required-setting feedback respects validity enabled state and reso
     );
 
     $disabledForm = new Basicrum_Test_Form();
-    $disabledEnabled = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_enabled', '0');
-    $disabledBeacon = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_beacon_endpoint', '');
-    $disabledSiteId = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_brum_site_id', '');
+    $disabledEnabled = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_enabled', '0');
+    $disabledBeacon = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_beacon_endpoint', '');
+    $disabledSiteId = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_brum_site_id', '');
     $disabledForm->addElement('basicrum_analytics_general_enabled', $disabledEnabled)
         ->addElement('basicrum_analytics_general_beacon_endpoint', $disabledBeacon)
         ->addElement('basicrum_analytics_general_brum_site_id', $disabledSiteId);
@@ -455,16 +455,16 @@ $tests['admin required-setting feedback respects validity enabled state and reso
     );
 
     $consentForm = new Basicrum_Test_Form();
-    $consentEnabled = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_enabled', '1');
-    $consentBeacon = new Varien_Data_Form_Element_Abstract(
+    $consentEnabled = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_enabled', '1');
+    $consentBeacon = new \Maho\Data\Form\Element\AbstractElement(
         'basicrum_analytics_general_beacon_endpoint',
         'https://collector.example.test/beacon'
     );
-    $consentSiteId = new Varien_Data_Form_Element_Abstract(
+    $consentSiteId = new \Maho\Data\Form\Element\AbstractElement(
         'basicrum_analytics_general_brum_site_id',
         '550e8400-e29b-41d4-a716-446655440000'
     );
-    $consentRequired = new Varien_Data_Form_Element_Abstract(
+    $consentRequired = new \Maho\Data\Form\Element\AbstractElement(
         'basicrum_analytics_general_opt_in_required',
         '1'
     );
@@ -480,9 +480,9 @@ $tests['admin required-setting feedback respects validity enabled state and reso
     );
 
     $invalidForm = new Basicrum_Test_Form();
-    $invalidEnabled = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_enabled', '1');
-    $invalidBeacon = new Varien_Data_Form_Element_Abstract('basicrum_analytics_general_beacon_endpoint', 'ftp://example.test');
-    $invalidSiteId = new Varien_Data_Form_Element_Abstract(
+    $invalidEnabled = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_enabled', '1');
+    $invalidBeacon = new \Maho\Data\Form\Element\AbstractElement('basicrum_analytics_general_beacon_endpoint', 'ftp://example.test');
+    $invalidSiteId = new \Maho\Data\Form\Element\AbstractElement(
         'basicrum_analytics_general_brum_site_id',
         '550e8400-e29b-11d4-a716-446655440000'
     );
@@ -739,6 +739,7 @@ $tests['valid immediate and consent configurations select the expected loader'] 
     basicrum_assert_contains('boomerang-loader-v15.min.js', $immediate, 'immediate mode loader is required');
     basicrum_assert_not_contains('consent-boomerang-loader', $immediate, 'immediate mode must not use consent loader');
     basicrum_assert_contains('brum_site_id', $immediate, 'Site ID must be rendered');
+    basicrum_assert_contains('["addVar","p_gen","maho"]', $immediate, 'beacons must identify Maho Commerce');
     basicrum_assert_contains('beacon_url', $immediate, 'Beacon Endpoint must be rendered');
     basicrum_assert_contains(
         '"strip_query_string":false',
@@ -842,9 +843,9 @@ $tests['HTTP policy migration preserves each explicit Beacon Endpoint scope'] = 
     );
 };
 
-$tests['setup installer persists versioned defaults through Magento APIs'] = function () use ($root) {
+$tests['setup installer persists versioned defaults through Maho APIs'] = function () use ($root) {
     $installerPath = $root
-        . '/app/code/community/BasicRum/Analytics/sql/basicrum_analytics_setup/install-1.1.0.php';
+        . '/app/code/local/BasicRum/Analytics/sql/basicrum_analytics_setup/install-1.1.0.php';
     $consentPath = 'basicrum_analytics/privacy/opt_in_required';
     $beaconPath = 'basicrum_analytics/general/beacon_endpoint';
     $httpPolicyPath = 'basicrum_analytics/developer/development_mode';
@@ -898,7 +899,7 @@ $tests['setup installer persists versioned defaults through Magento APIs'] = fun
         basicrum_assert_same(
             array('core/config_data'),
             $setup->requestedTables,
-            $caseName . ': installer must resolve the scoped configuration table through Magento'
+            $caseName . ': installer must resolve the scoped configuration table through Maho'
         );
         basicrum_assert_same(
             $case['expectedSaves'],

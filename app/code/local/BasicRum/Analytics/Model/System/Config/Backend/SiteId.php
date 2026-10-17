@@ -12,7 +12,8 @@ class BasicRum_Analytics_Model_System_Config_Backend_SiteId extends Mage_Core_Mo
      * @return BasicRum_Analytics_Model_System_Config_Backend_SiteId
      * @throws Mage_Core_Exception
      */
-    protected function _beforeSave()
+    #[\Override]
+    protected function _beforeSave(): self
     {
         $value = trim((string) $this->getValue());
 

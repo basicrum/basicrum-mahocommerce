@@ -7,7 +7,8 @@ declare(strict_types=1);
 class BasicRum_Analytics_Block_Boomerang_Loader extends Mage_Core_Block_Abstract
 {
 
-    protected function _toHtml() : string
+    #[\Override]
+    protected function _toHtml(): string
     {
         return $this->getBoomerangSnippet();
     }
@@ -49,7 +50,7 @@ class BasicRum_Analytics_Block_Boomerang_Loader extends Mage_Core_Block_Abstract
 
         $boomerangVars = [
             ["addVar", "p_type", $pageType],
-            ["addVar", "p_gen", "mage1"],
+            ["addVar", "p_gen", "maho"],
             ["addVar", "brum_site_id", $siteId]
         ];
 

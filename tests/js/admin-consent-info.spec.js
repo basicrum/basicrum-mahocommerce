@@ -2,12 +2,12 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { test, expect } = require("@playwright/test");
 
-const scriptPath = path.resolve(__dirname, "../../js/basicrum/admin/consent-info.js");
+const scriptPath = path.resolve(__dirname, "../../public/js/basicrum/admin/consent-info.js");
 
 for (const themeHeight of ["auto", "2em"]) {
   test(`callback textareas show five lines with theme height ${themeHeight}`, async ({ page }) => {
     const renderer = fs.readFileSync(path.resolve(__dirname,
-      "../../app/code/community/BasicRum/Analytics/Block/Adminhtml/System/Config/Form/Field/ConsentInfo.php"), "utf8");
+      "../../app/code/local/BasicRum/Analytics/Block/Adminhtml/System/Config/Form/Field/ConsentInfo.php"), "utf8");
     const snippets = renderer.match(/<textarea\b[^>]*>[\s\S]*?<\/textarea>/g);
     expect(snippets).toHaveLength(2);
     await page.setContent(`<style>textarea { height: ${themeHeight}; }</style>${snippets.join("\n")}`);

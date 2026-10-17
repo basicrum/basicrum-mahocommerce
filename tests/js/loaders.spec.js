@@ -42,7 +42,7 @@ if (window.basicRumInitConfig) {
 `;
 
 function loaderPath(file) {
-  return path.join(root, "js/basicrum/loaders", file);
+  return path.join(root, "public/js/basicrum/loaders", file);
 }
 
 async function preparePage(page, options = {}) {
